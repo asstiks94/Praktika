@@ -1,0 +1,32 @@
+import this
+a = 12
+b = 5
+
+x = 4.5
+y = 2.0
+
+s1 = "Hello"
+s2 = "Python"
+
+print("Цілі числа:")
+print("a + b =", a + b)
+print("a - b =", a - b)
+print("a * b =", a * b)
+print("a / b =", a / b)
+
+print("\nДійсні числа:")
+print("x + y =", x + y)
+print("x - y =", x - y)
+print("x * y =", x * y)
+print("x / y =", x / y)
+
+print("\nРядки:")
+print("s1 + s2 =", s1 + " " + s2)
+
+name = input("\nВведіть ім'я: ")
+num = float(input("Введіть число: "))
+
+print("\nВведені дані:")
+print("Ім'я користувача:", name)
+print("Число + 10 =", num + 10)
+print("Число * 2 =", num * 2)
