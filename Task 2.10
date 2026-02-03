@@ -1,0 +1,20 @@
+class Car:
+    def __init__(self, mileage):
+        self._mileage = mileage
+
+    @property
+    def mileage(self):
+        return self._mileage
+
+    @mileage.setter
+    def mileage(self, value):
+        if value >= self._mileage:
+            self._mileage = value
+        else:
+            print("Пробіг не може зменшуватися!")
+
+
+car = Car(20000)
+car.mileage = 25000
+car.mileage = 15000 
+print("Пробіг:", car.mileage)
