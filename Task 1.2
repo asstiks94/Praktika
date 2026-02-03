@@ -1,0 +1,11 @@
+def int_to_string(n):
+    if n == 0: return "0"
+    res, is_negative = "", n < 0
+    n = abs(n)
+    while n > 0:
+        res = chr(ord('0') + (n % 10)) + res
+        n //= 10
+    return "-" + res if is_negative else res
+
+num = -12345
+print(f"Результат: {int_to_string(num)} (Тип: {type(int_to_string(num))})")
