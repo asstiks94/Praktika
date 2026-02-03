@@ -1,0 +1,43 @@
+from abc import ABC, abstractmethod
+
+class Animal(ABC):
+    def __init__(self, name):
+        self.name = name
+
+    @abstractmethod
+    def sound(self):
+        pass
+
+    @abstractmethod
+    def eat(self):
+        pass
+class Dog(Animal):
+    def sound(self):
+        return "Гав!"
+
+    def eat(self):
+        return "Їсть мʼясо"
+
+
+class Cat(Animal):
+    def sound(self):
+        return "Мяу!"
+
+    def eat(self):
+        return "Їсть рибу"
+
+class Zookeeper:
+    def __init__(self, name):
+        self.name = name
+
+    def take_care(self, animal):
+        print(f"{self.name} доглядає за {animal.name}")
+        print(animal.sound())
+        print(animal.eat())
+
+animals = [Dog("Бобік"), Cat("Мурка")]
+keeper = Zookeeper("Олег")
+
+for animal in animals:
+    keeper.take_care(animal)
+    print("-" * 20)
