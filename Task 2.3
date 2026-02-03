@@ -1,0 +1,19 @@
+
+students = {
+    "Іван": [5, 4, 4, 5],
+    "Олена": [5, 5, 4, 5],
+    "Андрій": [3, 4, 4, 3]
+}
+
+average_scores = {}
+all_grades = []
+
+for name, grades in students.items():
+    avg = sum(grades) / len(grades)
+    average_scores[name] = avg
+    all_grades.extend(grades)
+
+unique_grades = set(all_grades)
+
+print("Середні бали:", average_scores)
+print("Унікальні оцінки:", unique_grades)
