@@ -1,0 +1,21 @@
+import subprocess
+import sys
+
+subprocess.check_call([sys.executable, "-m", "pip", "install", "pandas"])
+
+import pandas as pd
+
+data = {
+    'Ім\'я': ['Іван', 'Анна'],
+    'Прізвище': ['Петров', 'Сидор'],
+    'Дисц1': [5, 4], 'Дисц2': [4, 5], 'Дисц3': [3, 5], 'Дисц4': [5, 4], 'Дисц5': [4, 5]
+}
+df = pd.DataFrame(data)
+df.to_csv('students.csv', index=False)
+
+df = pd.read_csv('students.csv')
+df['Середній бал'] = df.iloc[:, 2:7].mean(axis=1)
+
+print(df[['Прізвище', 'Середній бал']])
+print("\nСереднє по предметах:")
+print(df.iloc[:, 2:7].mean())
