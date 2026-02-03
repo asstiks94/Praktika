@@ -1,0 +1,12 @@
+students = [
+    {"name": "Іван", "surname": "Петров", "grades": [5, 4, 3, 5, 4]},
+    {"name": "Анна", "surname": "Сидор", "grades": [4, 5, 5, 4, 5]}
+]
+
+print(f"{'Прізвище':<10} | {'Сер. бал':<8}")
+for s in students:
+    avg = sum(s['grades']) / len(s['grades'])
+    print(f"{s['surname']:<10} | {avg:<8.2f}")
+
+subjects_avg = [sum(s['grades'][i] for s in students) / len(students) for i in range(5)]
+print(f"\nСередні бали по предметах: {subjects_avg}")
