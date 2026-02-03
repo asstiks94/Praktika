@@ -6,10 +6,35 @@ def rectangle_area(width, height):
 def circle_area(radius):
     return math.pi * radius ** 2
 
-
-# Виклик функцій
 rect = rectangle_area(5, 10)
 circle = circle_area(7)
 
 print("Площа прямокутника:", rect)
 print("Площа кола:", circle)
+
+
+_______________2__Cпосіб______________
+
+
+import math
+
+class Rectangle:
+    def __init__(self, width, height):
+        self.width = width
+        self.height = height
+
+    def area(self):
+        return self.width * self.height
+
+class Circle:
+    def __init__(self, radius):
+        self.radius = radius
+
+    def area(self):
+        return math.pi * self.radius ** 2
+
+rect = Rectangle(5, 10)
+circle = Circle(7)
+
+print("Площа прямокутника:", rect.area())
+print("Площа кола:", circle.area())
