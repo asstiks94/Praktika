@@ -1,0 +1,66 @@
+import tkinter as tk
+from tkinter import colorchooser, filedialog
+
+current_color = "black"
+draw_mode = "line"
+start_x = start_y = 0
+
+
+def choose_color():
+    global current_color
+    color = colorchooser.askcolor()[1]
+    if color:
+        current_color = color
+
+
+def set_mode(mode):
+    global draw_mode
+    draw_mode = mode
+
+
+def start_draw(event):
+    global start_x, start_y
+    start_x, start_y = event.x, event.y
+
+
+def draw(event):
+    if draw_mode == "line":
+        canvas.create_line(start_x, start_y, event.x, event.y, fill=current_color)
+    elif draw_mode == "circle":
+        r = 20
+        canvas.create_oval(
+            event.x - r, event.y - r,
+            event.x + r, event.y + r,
+            outline=current_color
+        )
+
+
+def clear_canvas():
+    canvas.delete("all")
+
+
+def save_canvas():
+    path = filedialog.asksaveasfilename(defaultextension=".ps")
+    if path:
+        canvas.postscript(file=path)
+
+
+root = tk.Tk()
+root.title("Графіка")
+
+toolbar = tk.Frame(root)
+toolbar.pack()
+
+tk.Button(toolbar, text="Лінія", command=lambda: set_mode("line")).pack(side="left")
+tk.Button(toolbar, text="Коло", command=lambda: set_mode("circle")).pack(side="left")
+tk.Button(toolbar, text="Колір", command=choose_color).pack(side="left")
+tk.Button(toolbar, text="Очистити", command=clear_canvas).pack(side="left")
+tk.Button(toolbar, text="Зберегти", command=save_canvas).pack(side="left")
+
+canvas = tk.Canvas(root, width=600, height=400, bg="white")
+canvas.pack()
+
+canvas.bind("<Button-1>", start_draw)
+canvas.bind("<B1-Motion>", draw)
+
+root.mainloop()
