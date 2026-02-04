@@ -1,0 +1,116 @@
+import tkinter as tk
+from tkinter import ttk, colorchooser, messagebox
+import json
+import os
+
+SETTINGS_FILE = "settings.json"
+
+
+def load_settings():
+    if os.path.exists(SETTINGS_FILE):
+        try:
+            with open(SETTINGS_FILE, "r", encoding="utf-8") as f:
+                return json.load(f)
+        except json.JSONDecodeError:
+            return {}
+    return {}
+
+
+def save_settings(settings):
+    with open(SETTINGS_FILE, "w", encoding="utf-8") as f:
+        json.dump(settings, f)
+
+
+def apply_bg(color):
+    root.configure(bg=color)
+    for tab in tabs:
+        tab.configure(bg=color)
+    for lbl in labels:
+        lbl.configure(bg=color)
+
+
+def choose_color():
+    color = colorchooser.askcolor(title="Виберіть колір")[1]
+    if color:
+        settings["bg"] = color
+        apply_bg(color)
+        save_settings(settings)
+
+
+def submit_form():
+    name = name_entry.get()
+    email = email_entry.get()
+
+    if not name or not email:
+        messagebox.showwarning("Помилка", "Заповніть усі поля!")
+        return
+
+    result_label.config(
+        text=f"Введені дані:\nІмʼя: {name}\nEmail: {email}"
+    )
+
+
+root = tk.Tk()
+root.title("Програма з вкладками")
+root.geometry("500x350")
+
+settings = load_settings()
+bg_color = settings.get("bg", "#ffffff")
+
+
+notebook = ttk.Notebook(root)
+notebook.pack(expand=True, fill="both")
+
+tab_main = tk.Frame(notebook)
+tab_settings = tk.Frame(notebook)
+tab_about = tk.Frame(notebook)
+
+tabs = [tab_main, tab_settings, tab_about]
+
+notebook.add(tab_main, text="Головна")
+notebook.add(tab_settings, text="Налаштування")
+notebook.add(tab_about, text="Про програму")
+
+labels = []
+
+
+lbl1 = tk.Label(tab_main, text="Імʼя:")
+lbl1.pack(pady=5)
+labels.append(lbl1)
+
+name_entry = tk.Entry(tab_main)
+name_entry.pack()
+
+lbl2 = tk.Label(tab_main, text="Email:")
+lbl2.pack(pady=5)
+labels.append(lbl2)
+
+email_entry = tk.Entry(tab_main)
+email_entry.pack()
+
+tk.Button(tab_main, text="Надіслати", command=submit_form).pack(pady=10)
+
+result_label = tk.Label(tab_main, text="", justify="left")
+result_label.pack(pady=10)
+labels.append(result_label)
+
+
+tk.Button(
+    tab_settings,
+    text="Вибрати колір фону",
+    command=choose_color
+).pack(pady=20)
+
+
+lbl_about = tk.Label(
+    tab_about,
+    text="Автор: Студент\nНавчальний проєкт Tkinter",
+    justify="center"
+)
+lbl_about.pack(expand=True)
+labels.append(lbl_about)
+
+
+apply_bg(bg_color)
+
+root.mainloop()
