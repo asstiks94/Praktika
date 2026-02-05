@@ -1,0 +1,44 @@
+import sys
+import subprocess
+
+subprocess.check_call([sys.executable, "-m", "pip", "install", "cryptography", "rsa"])
+
+import hashlib
+from cryptography.fernet import Fernet
+import rsa
+
+
+message = "Це секретне повідомлення"
+hash_object = hashlib.sha256(message.encode())
+hash_hex = hash_object.hexdigest()
+print("SHA-256 хеш повідомлення:", hash_hex)
+
+
+key = Fernet.generate_key()
+cipher = Fernet(key)
+
+
+encrypted_message = cipher.encrypt(message.encode())
+print("\nЗашифроване повідомлення (AES):", encrypted_message)
+
+decrypted_message = cipher.decrypt(encrypted_message).decode()
+print("Розшифроване повідомлення (AES):", decrypted_message)
+
+
+(pub_key, priv_key) = rsa.newkeys(512)  
+
+
+signature = rsa.sign(message.encode(), priv_key, 'SHA-256')
+print("\nЦифровий підпис повідомлення:", signature)
+
+
+try:
+    rsa.verify(message.encode(), signature, pub_key)
+    print("Підпис успішно підтверджено")
+except rsa.VerificationError:
+    print("Підпис не підтверджено")
+
+
+print("\n--- Різниця між гешуванням і шифруванням ---")
+print("Гешування: неможливо відновити оригінальний текст з хешу, використовується для перевірки цілісності.")
+print("Шифрування: можна відновити оригінальний текст, якщо є ключ, використовується для захисту даних.")
