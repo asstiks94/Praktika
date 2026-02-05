@@ -1,0 +1,31 @@
+import os
+from dotenv import load_dotenv
+
+
+load_dotenv()
+
+
+db_url = os.getenv("DB_URL")
+api_key = os.getenv("API_KEY")
+
+print("DB_URL:", db_url)
+print("API_KEY:", api_key)
+
+
+import os
+import requests
+from dotenv import load_dotenv
+
+load_dotenv()
+
+API_KEY = os.getenv("API_KEY")
+
+url = "https://httpbin.org/get"
+headers = {
+    "Authorization": f"Bearer {API_KEY}"
+}
+
+response = requests.get(url, headers=headers)
+
+print("Статус-код:", response.status_code)
+print("Тіло відповіді:", response.text)
