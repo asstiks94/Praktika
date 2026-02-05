@@ -1,0 +1,36 @@
+import sys
+import subprocess
+
+subprocess.check_call([sys.executable, "-m", "pip", "install", "requests"])
+
+import requests
+
+url = (
+    "https://api.open-meteo.com/v1/forecast"
+    "?latitude=50.45&longitude=30.52&current_weather=true"
+)
+
+response = requests.get(url)
+
+print("Статус-код:", response.status_code)
+print("\nЗаголовки:")
+print(response.headers)
+print("\nТіло відповіді:")
+print(response.text)
+
+
+url = "https://httpbin.org/post"
+
+data = {
+    "name": "Asstiks",
+    "course": "Python",
+    "type": "POST test"
+}
+
+response = requests.post(url, json=data)
+
+print("\nСтатус-код:", response.status_code)
+print("\nЗаголовки:")
+print(response.headers)
+print("\nТіло відповіді:")
+print(response.json())
