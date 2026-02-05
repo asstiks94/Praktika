@@ -1,0 +1,61 @@
+import sys
+import subprocess
+
+subprocess.check_call([sys.executable, "-m", "pip", "install", "fastapi"])
+subprocess.check_call([sys.executable, "-m", "pip", "install", "uvicorn"])
+subprocess.check_call([sys.executable, "-m", "pip", "install", "python-jose[cryptography]"])
+subprocess.check_call([sys.executable, "-m", "pip", "install", "passlib[bcrypt]"])
+subprocess.check_call([sys.executable, "-m", "pip", "install", "python-multipart"])
+
+from fastapi import FastAPI, HTTPException, Depends
+from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
+from passlib.hash import bcrypt
+from jose import JWTError, jwt
+from datetime import datetime, timedelta
+
+SECRET_KEY = "mysecretkey123"
+ALGORITHM = "HS256"
+ACCESS_TOKEN_EXPIRE_MINUTES = 30
+
+fake_users_db = {}
+
+app = FastAPI()
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+
+@app.post("/register")
+def register(username: str, password: str):
+    if username in fake_users_db:
+        raise HTTPException(status_code=400, detail="Користувач вже існує")
+    hashed_password = bcrypt.hash(password)
+    fake_users_db[username] = {"username": username, "password": hashed_password}
+    return {"msg": f"Користувач '{username}' зареєстрований"}
+
+@app.post("/token")
+def login(form_data: OAuth2PasswordRequestForm = Depends()):
+    user = fake_users_db.get(form_data.username)
+    if not user or not bcrypt.verify(form_data.password, user["password"]):
+        raise HTTPException(status_code=401, detail="Невірний логін або пароль")
+    expire = datetime.utcnow() + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+    token = jwt.encode({"sub": user["username"], "exp": expire}, SECRET_KEY, algorithm=ALGORITHM)
+    return {"access_token": token, "token_type": "bearer"}
+
+def get_current_user(token: str = Depends(oauth2_scheme)):
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        username: str = payload.get("sub")
+        if username is None:
+            raise HTTPException(status_code=401, detail="Невірний токен")
+    except JWTError:
+        raise HTTPException(status_code=401, detail="Невірний токен")
+    user = fake_users_db.get(username)
+    if user is None:
+        raise HTTPException(status_code=401, detail="Користувач не знайдений")
+    return user
+
+@app.get("/profile")
+def read_profile(current_user: dict = Depends(get_current_user)):
+    return {"username": current_user["username"], "message": "Це ваш профіль"}
+
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="127.0.0.1", port=8000, reload=True)
