@@ -1,0 +1,70 @@
+import sys
+import subprocess
+
+subprocess.check_call([sys.executable, "-m", "pip", "install", "flask"])
+
+from flask import Flask, request, jsonify
+
+app = Flask(__name__)
+
+users = []
+current_id = 1
+
+
+def response(status, data=None, message=""):
+    return {
+        "status": status,
+        "data": data,
+        "message": message
+    }
+
+
+@app.route("/users", methods=["GET"])
+def get_users():
+    return jsonify(response("success", users, "User list"))
+
+
+@app.route("/users", methods=["POST"])
+def create_user():
+    global current_id
+    data = request.json
+    user = {
+        "id": current_id,
+        "name": data["name"],
+        "email": data["email"]
+    }
+    users.append(user)
+    current_id += 1
+    return jsonify(response("success", user, "User created"))
+
+
+@app.route("/users/<int:user_id>", methods=["GET"])
+def get_user(user_id):
+    for u in users:
+        if u["id"] == user_id:
+            return jsonify(response("success", u, "User found"))
+    return jsonify(response("error", None, "User not found")), 404
+
+
+@app.route("/users/<int:user_id>", methods=["PUT"])
+def update_user(user_id):
+    data = request.json
+    for u in users:
+        if u["id"] == user_id:
+            u["name"] = data["name"]
+            u["email"] = data["email"]
+            return jsonify(response("success", u, "User updated"))
+    return jsonify(response("error", None, "User not found")), 404
+
+
+@app.route("/users/<int:user_id>", methods=["DELETE"])
+def delete_user(user_id):
+    for u in users:
+        if u["id"] == user_id:
+            users.remove(u)
+            return jsonify(response("success", None, "User deleted"))
+    return jsonify(response("error", None, "User not found")), 404
+
+
+if __name__ == "__main__":
+    app.run()
